@@ -10,7 +10,7 @@ const itemsPerPage = 4;
 
 async function fetchData() {
     try {
-        const response = await fetch(' https://mocki.io/v1/866bbef0-5397-4dfb-8925-af4aed3486c5 ');
+        const response = await fetch(' https://mocki.io/v1/e8bd4cad-661a-4317-877d-9af2fe79bd6a ');
         fetchedData = await response.json();
         renderCards();
         renderPagination();
@@ -54,6 +54,7 @@ function renderCards() {
     });
 }
 
+
 function renderPagination() {
     const paginationControls = document.getElementById('pagination-controls');
     paginationControls.innerHTML = '';
@@ -62,7 +63,7 @@ function renderPagination() {
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     if (totalPages > 1) {
-        const prevButton = document.createElement('button');
+        /*const prevButton = document.createElement('button');
         prevButton.textContent = 'Previous';
         prevButton.disabled = currentPage === 1;
         prevButton.addEventListener('click', () => {
@@ -70,21 +71,45 @@ function renderPagination() {
             renderCards();
             renderPagination();
         });
-        paginationControls.appendChild(prevButton);
+        paginationControls.appendChild(prevButton);*/
 
-        for (let i = 1; i <= totalPages; i++) {
+        const createPageButton = (page) => {
             const pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            pageButton.disabled = i === currentPage;
+            pageButton.textContent = page;
+            pageButton.disabled = page === currentPage;
             pageButton.addEventListener('click', () => {
-                currentPage = i;
+                currentPage = page;
                 renderCards();
                 renderPagination();
             });
             paginationControls.appendChild(pageButton);
+        };
+
+        createPageButton(1);
+
+        if (currentPage > 3) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '. . .';
+            ellipsis.classList.add('ellipsis');
+            paginationControls.appendChild(ellipsis);
         }
 
-        const nextButton = document.createElement('button');
+        for (let i = Math.max(2, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) {
+            createPageButton(i);
+        }
+
+        if (currentPage < totalPages - 3) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '. . .';
+            ellipsis.classList.add('ellipsis');
+            paginationControls.appendChild(ellipsis);
+        }
+
+        if (totalPages > 1) {
+            createPageButton(totalPages);
+        }
+
+        /* const nextButton = document.createElement('button');
         nextButton.textContent = 'Next';
         nextButton.disabled = currentPage === totalPages;
         nextButton.addEventListener('click', () => {
@@ -92,8 +117,14 @@ function renderPagination() {
             renderCards();
             renderPagination();
         });
-        paginationControls.appendChild(nextButton);
+        paginationControls.appendChild(nextButton);*/
     }
+}
+
+function filterCards() {
+    currentPage = 1;
+    renderCards();
+    renderPagination();
 }
 
 function filterCards() {
